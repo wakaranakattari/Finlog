@@ -1,3 +1,4 @@
+use chrono::Local;
 use finlog::utils::*;
 use std::io::{self, Write};
 use std::process;
@@ -17,8 +18,23 @@ fn clear_console() {
 /// Clears screen and exits with Magenta message
 fn exit() {
     clear_console();
-    color_println("Goodbye!", Color::Magenta);
+    println!("{}", color_print("Goodbye!", Color::Magenta));
     process::exit(0);
+}
+
+fn header() {
+    println!(
+        "{}",
+        color_print("┌────────────────────────────────────────┐", Color::Green)
+    );
+    println!(
+        "{}",
+        color_print("│                 Finlog                 │", Color::Yellow)
+    );
+    println!(
+        "{}",
+        color_print("└────────────────────────────────────────┘", Color::Red)
+    );
 }
 
 // ================================ //
@@ -33,11 +49,19 @@ fn spending_item(spending: &mut Vec<String>) {
 
     print!("Enter a spending item: ");
     io::stdout().flush().unwrap();
-    io::stdin().read_line(&mut item).expect("Error read line");
+    io::stdin()
+        .read_line(&mut item)
+        .expect(&color_error_print("Error reading line"));
 
     spending.push(item.trim().to_string());
 
-    println!("Spending item added: {}", spending[spending.len() - 1]);
+    print!(
+        "{}",
+        color_info_print(&format!(
+            "Spending item added: {}",
+            spending[spending.len() - 1]
+        ))
+    );
     thread::sleep(Duration::from_millis(1500));
     clear_console();
 }
@@ -48,17 +72,32 @@ fn view_spending_items(spending: &[String]) {
     println!("Your spending items:");
     for (index, item) in spending.iter().enumerate() {
         println!("{}. {}", index + 1, item);
-        println!();
     }
-    thread::sleep(Duration::from_millis(1500));
+
+    print!("\n<- Back to main menu");
+    io::stdout().flush().unwrap();
+    io::stdin().read_line(&mut String::new()).unwrap();
+    // thread::sleep(Duration::from_millis(1500));
     clear_console();
 }
 
 /// Main menu handler
 fn menu(spending: &mut Vec<String>) {
-    println!("┌────────────────────────────────────────┐");
-    println!("│                 Finlog                 │");
-    println!("└────────────────────────────────────────┘");
+    let now = Local::now();
+
+    header();
+
+    println!(
+        "{}{}",
+        color_print("Time: ", Color::Cyan),
+        now.format("%H:%M:%S")
+    );
+
+    println!(
+        "{}{}",
+        color_print("Date today: ", Color::Cyan),
+        now.format("%d.%m.%Y")
+    );
 
     println!("\n1. Add spending item");
     println!("2. View spending items");
@@ -68,13 +107,15 @@ fn menu(spending: &mut Vec<String>) {
     io::stdout().flush().unwrap();
 
     let mut input = String::new();
-    io::stdin().read_line(&mut input).expect("Error read line");
+    io::stdin()
+        .read_line(&mut input)
+        .expect(&color_error_print("Error read line"));
 
     match input.trim() {
         "1" => spending_item(spending),
         "2" => view_spending_items(spending),
         "3" => exit(),
-        _ => println!("Invalid choice"),
+        _ => println!("{}", color_error_print("Invalid choice")),
     }
 }
 
@@ -84,6 +125,7 @@ fn menu(spending: &mut Vec<String>) {
 
 fn main() {
     let mut spending: Vec<String> = Vec::new();
+
     clear_console();
 
     loop {
