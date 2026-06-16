@@ -35,13 +35,21 @@ impl SpendingManager {
         let mut amount = String::new();
         let mut date = String::new();
 
+        clear_console();
+        add_spending_header();
         prompt_user_input("Enter a spending name", &mut name);
 
+        clear_console();
+        add_spending_header();
         prompt_user_input("Enter a spending category", &mut category);
 
+        clear_console();
+        add_spending_header();
         prompt_user_input("Enter a spending amount", &mut amount);
         let amount: f64 = amount.trim().parse().unwrap_or(0.0);
 
+        clear_console();
+        add_spending_header();
         prompt_user_input("Enter a spending date (YYYY-MM-DD)", &mut date);
         let date = parse_date(&date)
             .unwrap_or_else(|| Local::now().date_naive())
@@ -74,6 +82,8 @@ impl SpendingManager {
     }
 
     pub fn view_spending_items(&self) {
+        clear_console();
+        view_spending_header();
         if self.spending.is_empty() {
             println!("{}", color_info_print("No spending items to display."));
             return;
