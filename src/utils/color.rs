@@ -8,6 +8,7 @@ pub enum Color {
     Magenta,
     Cyan,
     White,
+    Gray,
 }
 
 pub enum BackgroundColor {
@@ -34,6 +35,7 @@ impl Color {
             Color::Magenta => "\x1B[35m",
             Color::Cyan => "\x1B[36m",
             Color::White => "\x1B[37m",
+            Color::Gray => "\x1B[90m",
         }
     }
 }
