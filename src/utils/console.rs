@@ -36,8 +36,37 @@ pub fn header() {
     );
 }
 
+pub fn add_spending_header() {
+    println!(
+        "{}",
+        color_print("┌────────────────────────────────────────┐", Color::Gray)
+    );
+    println!(
+        "{}",
+        color_print("│               Add Spending             │", Color::Gray)
+    );
+    println!(
+        "{}",
+        color_print("└────────────────────────────────────────┘", Color::Gray)
+    );
+}
+
+pub fn view_spending_header() {
+    println!(
+        "{}",
+        color_print("┌────────────────────────────────────────┐", Color::Gray)
+    );
+    println!(
+        "{}",
+        color_print("│              View Spending             │", Color::Gray)
+    );
+    println!(
+        "{}",
+        color_print("└────────────────────────────────────────┘", Color::Gray)
+    );
+}
+
 pub fn prompt_user_input(prompt: &str, input: &mut String) {
-    clear_console();
     print!("{prompt}: ");
     io::stdout().flush().unwrap();
     io::stdin()

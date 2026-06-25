@@ -1,0 +1,155 @@
+.expenses-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1rem;
+}
+
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  background-color: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: var(--border-radius);
+  box-shadow: 4px 4px 0 var(--border);
+  transition: all 0.1s ease;
+  image-rendering: pixelated;
+}
+
+.stat-card:hover {
+  transform: translate(-1px, -1px);
+  border-color: var(--accent-peach);
+  box-shadow: 5px 5px 0 var(--border);
+}
+
+.stat-card span:first-child {
+  color: var(--text-secondary);
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Pixelify Sans', monospace;
+}
+
+.stat-card span:last-child {
+  color: var(--accent-rose);
+  font-size: 32px;
+  font-weight: 700;
+  font-family: 'Pixelify Sans', monospace;
+}
+
+.all-expenses {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.all-expenses > span {
+  display: block;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-left: 0.5rem;
+  color: var(--text-primary);
+  border-left: 4px solid var(--accent-blush);
+  font-family: 'Pixelify Sans', monospace;
+}
+
+.expenses-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.expense-card {
+  background-color: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: 4px 4px 0 var(--border);
+  transition: all 0.1s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  image-rendering: pixelated;
+}
+
+.expense-card:hover {
+  transform: translate(-1px, -1px);
+  border-color: var(--accent-peach);
+  box-shadow: 5px 5px 0 var(--border);
+}
+
+.expense-name {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: 'Pixelify Sans', monospace;
+}
+
+.expense-category {
+  display: inline-block;
+  padding: 0.1rem 0.75rem;
+  background-color: rgba(255, 205, 178, 0.1);
+  border: 1px solid var(--accent-blush);
+  border-radius: 4px;
+  font-size: 16px;
+  color: var(--accent-blush);
+  width: fit-content;
+  font-family: 'Pixelify Sans', monospace;
+}
+
+.expense-amount {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--accent-rose);
+  font-family: 'Pixelify Sans', monospace;
+}
+
+.expense-meta {
+  display: flex;
+  gap: 1rem;
+  color: var(--text-secondary);
+  font-size: 16px;
+  border-top: 2px solid var(--border);
+  padding-top: 0.75rem;
+  margin-top: 0.25rem;
+  font-family: 'Pixelify Sans', monospace;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 2rem;
+  background-color: var(--bg-secondary);
+  border: 2px dashed var(--border);
+  border-radius: var(--border-radius);
+  color: var(--text-secondary);
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state-title {
+  font-size: 22px;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-family: 'Pixelify Sans', monospace;
+}
+
+.empty-state-text {
+  font-size: 18px;
+  color: var(--text-secondary);
+  font-family: 'Pixelify Sans', monospace;
+}

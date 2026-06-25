@@ -1,12 +1,18 @@
 use chrono::Local;
+use finlog::storage::config::config::check_name;
+use finlog::storage::config::load_name;
 use finlog::utils::*;
 use finlog::{core::SpendingManager, server::run_server};
 use std::io::{self, Write};
-use std::thread;
-use std::time::Duration;
 
-/// Main menu handler
-async fn menu(spending: &mut SpendingManager) {
+/// Renders and handles the main menu loop iteration.
+///
+/// Displays the current time, date, greeting, and menu options.
+/// Reads user input and dispatches to the appropriate handler.
+///
+/// # Errors
+/// Returns [`AppError`] if any I/O operation fails.
+async fn menu(spending: &mut SpendingManager) -> Result<(), AppError> {
     let now = Local::now();
 
     header();
@@ -14,7 +20,7 @@ async fn menu(spending: &mut SpendingManager) {
     println!(
         "\n{}{}",
         color_print("Time: ", Color::Cyan),
-        now.format("%H:%M:%S")
+        now.format("%H:%M")
     );
 
     println!(
@@ -23,74 +29,93 @@ async fn menu(spending: &mut SpendingManager) {
         now.format("%d.%m.%Y")
     );
 
-    println!("{}, Nikita!\n", color_print("Good evening", Color::Yellow));
+    let username = load_name().unwrap_or("Name".to_string());
+    time_greeting(&username);
+
+    let items = [
+        "Start WEB Version",
+        "Add spending item",
+        "View spending items",
+        "Show statistics",
+        "Find item by name",
+        "Delete item",
+        "Exit",
+    ];
 
     println!("┌────────────────────────────────────────┐");
-    println!("│ 1. Start WEB Version                   │");
-    println!("│ 2. Add spending item                   │");
-    println!("│ 3. View spending items                 │");
-    println!("│ 4. Calculate percentage of total       │");
-    println!("│ 5. Show statistics                     │");
-    println!("│ 6. Find item by name                   │");
-    println!("│ 7. Delete item                         │");
-    println!("│ 8. Settings                            │");
-    println!("│ 9. Exit                                │");
+    for (i, item) in items.iter().enumerate() {
+        println!("│ {}. {:<35} │", i + 1, item);
+    }
     println!("└────────────────────────────────────────┘");
 
     print!("\n> ");
-    io::stdout().flush().unwrap();
+    io::stdout().flush()?;
 
     let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect(&color_error_print("Error read line"));
+    io::stdin().read_line(&mut input)?;
 
     match input.trim() {
         "1" => {
-            tokio::spawn(async {
-                run_server(3000).await;
-            });
-
-            tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
-
-            println!("\n<- Press Enter to back to main menu");
-            let mut dummy = String::new();
-            io::stdin().read_line(&mut dummy).unwrap();
-
+            let _ = run_server(3000).await;
+            back_to_main_menu()?;
+        }
+        "2" => spending.add_spending_item()?,
+        "3" => spending.view_spending_items()?,
+        "4" => spending.show_spending_statistic()?,
+        "5" => {
             clear_console();
-        }
-        "2" => spending.add_spending_item(),
-        "3" => spending.view_spending_items(),
-        //  Coming soon methods
-        // "4" => spending.calculate_percentage_of_total(),
-        // "5" => spending.show_statistics(),
-        // "6" => spending.find_item_by_name(),
-        // "7" => spending.delete_spending_item(),
-        // "8" => spending.settings(),
-        "9" => exit(),
-        "" => {
-            if input.trim().is_empty() {
-                return;
+            print_header("Find Item by Name");
+
+            print!("{}", color_print("Enter item name: ", Color::Green));
+            io::stdout().flush()?;
+            let mut input = String::new();
+            io::stdin().read_line(&mut input)?;
+
+            let results = spending.find_item_by_name(input.trim());
+            if results.is_empty() {
+                println!("{}", color_error_print("Item not found."));
+            } else {
+                for item in results {
+                    println!(
+                        "{} | {} | {:.2} | {}",
+                        item.name, item.category, item.amount, item.date
+                    );
+                }
             }
+
+            back_to_main_menu()?;
         }
+        "6" => spending.delete_spending_item()?,
+        "7" => exit(),
         _ => {
             clear_console();
             println!("{}", color_error_print("Coming soon"));
-            thread::sleep(Duration::from_millis(1500));
+            thread_sleep_timer();
         }
     }
+
+    Ok(())
 }
 
 // ┌──────────────────────────────┐ //
 // │            ENTRY             │ //
 // └──────────────────────────────┘ //
 
+/// Application entry point.
+///
+/// Initializes the spending manager, checks for a saved username
+/// on first launch, then runs the main menu in a loop until the
+/// user exits.
 #[tokio::main]
 async fn main() {
     clear_console();
     let mut spending = SpendingManager::new();
 
+    check_name();
+
     loop {
-        menu(&mut spending).await;
+        if let Err(e) = menu(&mut spending).await {
+            eprintln!("{}", e);
+        }
     }
 }

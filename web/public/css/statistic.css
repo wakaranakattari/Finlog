@@ -1,0 +1,126 @@
+.statistics-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1rem;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  border-left: 4px solid var(--accent-blush);
+  padding-left: 1rem;
+  font-family: 'Pixelify Sans', monospace;
+}
+
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  background-color: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: var(--border-radius);
+  box-shadow: 4px 4px 0 var(--border);
+  transition: all 0.1s ease;
+  image-rendering: pixelated;
+}
+
+.stat-card:hover {
+  transform: translate(-1px, -1px);
+  border-color: var(--accent-peach);
+  box-shadow: 5px 5px 0 var(--border);
+}
+
+.stat-card span:first-child {
+  color: var(--text-secondary);
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Pixelify Sans', monospace;
+}
+
+.stat-card span:last-child {
+  color: var(--accent-rose);
+  font-size: 32px;
+  font-weight: 700;
+  font-family: 'Pixelify Sans', monospace;
+}
+
+.charts-section {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.chart-card {
+  background-color: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: 4px 4px 0 var(--border);
+  transition: all 0.1s ease;
+  width: 100%;
+  box-sizing: border-box;
+  image-rendering: pixelated;
+}
+
+.chart-card:hover {
+  transform: translate(-1px, -1px);
+  border-color: var(--accent-peach);
+  box-shadow: 5px 5px 0 var(--border);
+}
+
+.chart-card h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+  border-left: 4px solid var(--accent-blush);
+  padding-left: 0.75rem;
+  font-family: 'Pixelify Sans', monospace;
+}
+
+.chart-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-summary {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart-container {
+    height: 250px;
+  }
+  
+  .page-title {
+    font-size: 1.3rem;
+  }
+  
+  .stat-card span:last-child {
+    font-size: 28px;
+  }
+}
