@@ -4,6 +4,7 @@ use io::Write;
 use std::{io, net::SocketAddr, process::Command};
 use tower_http::services::ServeDir;
 use std::path::Path;
+use indicatif::{ProgressBar, ProgressStyle};
 
 /// Starts the embedded web server on the given port.
 ///
@@ -20,9 +21,18 @@ use std::path::Path;
 /// server startup fails.
 pub async fn run_server(port: u16) -> Result<(), Box<dyn std::error::Error>> {
     if !Path::new("web/public/js/main.js").exists() {
-        println!();
-        print!("{}", color_info_print("Building web version..."));
+
+        print!("{}", color_info_print(
+            "When you first launch the WEB version of Finlog,\nfor your convenience, the necessary dependencies are automatically installed\nand the web application is compiled. Please wait a bit!"
+        ));
         io::stdout().flush().unwrap();
+        println!();
+
+        let pb = ProgressBar::new_spinner();
+        pb.set_style(ProgressStyle::default_spinner()
+            .template("{spinner:.blue} {msg}")?);
+        pb.set_message(color_info_print("Building web version..."));
+        pb.enable_steady_tick(std::time::Duration::from_millis(100));
 
         if !Path::new("web/node_modules").exists() {
             #[cfg(target_os = "windows")]
@@ -46,6 +56,7 @@ pub async fn run_server(port: u16) -> Result<(), Box<dyn std::error::Error>> {
             .args(["-c", "cd web && npx shadow-cljs release app"])
             .output()?;
 
+        pb.finish_and_clear();
         print!("{}", color_info_print("Build completed!"));
         io::stdout().flush().unwrap();
     }
