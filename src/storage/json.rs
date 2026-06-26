@@ -1,5 +1,9 @@
+use std::{
+    fs,
+    path::Path,
+};
+
 use crate::core::spending::SpendingItem;
-use std::path::Path;
 
 const EXPENSIVE_DATA_FILE: &str = "./web/public/data/expenses/expensive.json";
 
@@ -13,10 +17,10 @@ pub fn save_items(items: &[SpendingItem]) -> Result<(), String> {
     let json = serde_json::to_string_pretty(items).map_err(|e| e.to_string())?;
 
     if let Some(parent) = Path::new(EXPENSIVE_DATA_FILE).parent() {
-        std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
     }
 
-    std::fs::write(EXPENSIVE_DATA_FILE, json).map_err(|e| e.to_string())
+    fs::write(EXPENSIVE_DATA_FILE, json).map_err(|e| e.to_string())
 }
 
 /// Removes the item at the given index and persists the updated list.
@@ -43,6 +47,6 @@ pub fn load_items() -> Result<Vec<SpendingItem>, String> {
         return Ok(vec![]);
     }
 
-    let json = std::fs::read_to_string(EXPENSIVE_DATA_FILE).map_err(|e| e.to_string())?;
+    let json = fs::read_to_string(EXPENSIVE_DATA_FILE).map_err(|e| e.to_string())?;
     serde_json::from_str(&json).map_err(|e| e.to_string())
 }
