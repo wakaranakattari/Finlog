@@ -1,10 +1,14 @@
+use std::{
+    io::{self, Write},
+    net::SocketAddr,
+    path::Path,
+    process::Command,
+};
+
 use crate::utils::color::*;
 use axum::Router;
-use io::Write;
-use std::{io, net::SocketAddr, process::Command};
-use tower_http::services::ServeDir;
-use std::path::Path;
 use indicatif::{ProgressBar, ProgressStyle};
+use tower_http::services::ServeDir;
 
 /// Starts the embedded web server on the given port.
 ///
