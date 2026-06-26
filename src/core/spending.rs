@@ -1,10 +1,10 @@
-use crate::storage;
-use crate::utils::color::*;
-use crate::utils::console::*;
-use crate::utils::AppError;
 use chrono::Local;
 use serde::{Deserialize, Serialize};
-use std::io::{self, Write};
+
+use crate::{
+    storage,
+    utils::{color::*, console::*, AppError},
+};
 
 /// Represents a single spending record.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -32,49 +32,26 @@ impl SpendingManager {
     /// # Errors
     /// Returns [`AppError`] if any I/O or storage operation fails.
     pub fn add_spending_item(&mut self) -> Result<(), AppError> {
-        let mut name = String::new();
-        let mut category = String::new();
-        let mut amount = String::new();
-        let mut date = String::new();
-
         clear_console();
-        print_header("Add Spending");
-        prompt_user_input("Enter a spending name", &mut name)?;
+        print_header("Add Spending Item");
 
-        clear_console();
-        print_header("Add Spending");
-        prompt_user_input("Enter a spending category", &mut category)?;
+        let name = prompt_input("Enter a spending name: ")?;
+        let category = prompt_input("Enter a spending category: ")?;
+        let amount = prompt_input("Enter a spending amount: ")?
+            .parse()
+            .unwrap_or(0.0);
+        let date = prompt_input("Enter a spending date (DD-MM-YYYY): ")?;
 
-        clear_console();
-        print_header("Add Spending");
-        prompt_user_input("Enter a spending amount", &mut amount)?;
-        let amount: f64 = amount.trim().parse().unwrap_or(0.0);
-
-        clear_console();
-        print_header("Add Spending");
-        prompt_user_input("Enter a spending date (YYYY-MM-DD)", &mut date)?;
         let date = parse_date(&date)
             .unwrap_or_else(|| Local::now().date_naive())
             .format("%d.%m.%Y")
             .to_string();
 
-        let item = SpendingItem {
-            name: name.trim().to_string(),
-            category: category.trim().to_string(),
-            amount,
-            date,
-        };
+        let item = SpendingItem { name, category, amount, date };
 
-        println!(
-            "{}",
-            color_info_print(&format!(
-                "Spending item added: {} - {} - {} - {}",
-                name.trim(),
-                category.trim(),
-                amount,
-                item.date
-            ))
-        );
+        println!("{}", color_info_print(&format!("Spending item added: {} - {} - {} - {}",
+                item.name, item.category, item.amount, item.date
+        )));
 
         self.spending.push(item);
         storage::save_items(&self.spending)?;
@@ -141,35 +118,24 @@ impl SpendingManager {
         }
 
         for (index, item) in self.spending.iter().enumerate() {
-            println!(
-                "{}. {} | {} | {:.2} | {}",
-                index + 1,
-                item.name,
-                item.category,
-                item.amount,
-                item.date,
-            );
+            println!("{}. {} | {} | {:.2} | {}", index + 1,
+                item.name, item.category, item.amount, item.date);
         }
 
-        print!("{}", color_print("Enter number of item to delete: ", Color::Green));
-        io::stdout().flush()?;
-        let mut input = String::new();
-        io::stdin().read_line(&mut input)?;
-        let index: usize = input.trim().parse().unwrap_or(0) - 1;
+        let input = prompt_input("Enter number of item to delete: ")?;
+        let index: usize = input.parse().unwrap_or(0) - 1;
 
         if index < self.spending.len() {
-            if let Err(e) = storage::delete_items(&mut self.spending, index) {
-                println!("{}", color_error_print(&format!("Error deleting item: {}", e)));
-            } else {
+                storage::delete_items(&mut self.spending, index)?;
                 println!("{}", color_info_print("Item deleted successfully."));
                 thread_sleep_timer();
                 self.view_spending_items()?;
-            }
-        } else {
+            } else {
             println!("{}", color_error_print("Invalid item number."));
         }
 
         Ok(())
+    
     }
 
     /// Displays total spending amount and record count across all items.
@@ -189,16 +155,10 @@ impl SpendingManager {
         let count = self.spending.len();
 
         print!(
-            "\n{}{:.2}",
+            "\n{}{:.2}\n{} {}",
             color_print("Total spending: ", Color::Cyan),
-            total
-        );
-
-        io::stdout().flush()?;
-
-        println!(
-            "{}{}",
-            color_print("\nTotal records: ", Color::Cyan),
+            total,
+            color_print("Total records: ", Color::Cyan),
             count
         );
 
@@ -214,6 +174,28 @@ impl SpendingManager {
         self.spending.iter()
             .filter(|item| item.name.to_lowercase().contains(&query))
             .collect()
+    }
+
+    pub fn handle_find_item_by_name(&self) -> Result<(), AppError> {
+            clear_console();
+            print_header("Find Item by Name");
+
+            let input = prompt_input("Enter item name: ")?;
+
+            let results = self.find_item_by_name(&input);
+            if results.is_empty() {
+                println!("{}", color_error_print("Item not found."));
+            } else {
+                for item in results {
+                    println!(
+                        "{} | {} | {:.2} | {}",
+                        item.name, item.category, item.amount, item.date
+                    );
+                }
+            }
+
+            back_to_main_menu()?;
+            Ok(())
     }
 
     /// Returns a slice of all spending items.
