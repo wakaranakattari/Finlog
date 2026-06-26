@@ -1,23 +1,29 @@
-use crate::storage::config::*;
-use crate::utils::*;
-use chrono::Datelike;
-use chrono::NaiveDate;
-use chrono::Timelike;
-use std::io::{self, Write};
-use std::process;
-use std::thread;
-use std::time::Duration;
+use std::{
+    io::{self, Write},
+    process,
+    thread,
+    time::Duration,
+};
+
+use chrono::{Datelike, NaiveDate, Timelike};
+
+use crate::{
+    storage::config::*,
+    utils::*,
+};
 
 /// Clears the terminal screen including scrollback history.
+#[inline]
 pub fn clear_console() {
     print!("\x1B[2J\x1B[3J\x1B[H");
     io::stdout().flush().unwrap();
 }
 
 /// Clears the screen, prints a goodbye message, and exits the process.
+#[inline]
 pub fn exit() {
     clear_console();
-    println!("{}", color_print("Goodbye!", Color::Magenta));
+    print_header("Goodbye!");
     process::exit(0);
 }
 
@@ -53,13 +59,15 @@ pub fn prompt_for_username() {
 }
 
 /// Prints the main Finlog application header.
-pub fn header() {
+#[inline]
+pub fn header(title: &str) {
     println!("{}", color_print("┌────────────────────────────────────────┐", Color::Green));
-    println!("{}", color_print("│                 Finlog                 │", Color::Yellow));
+    println!("{}", color_print(&format!("│{:^40}│", title), Color::Yellow));
     println!("{}", color_print("└────────────────────────────────────────┘", Color::Red));
 }
 
 /// Prints a centered section header with the given title in a gray box.
+#[inline]
 pub fn print_header(title: &str) {
     println!("{}", color_print("┌────────────────────────────────────────┐", Color::Gray));
     println!("{}", color_print(&format!("│{:^40}│", title), Color::Gray));
@@ -78,15 +86,16 @@ pub fn back_to_main_menu() -> Result<(), AppError> {
     Ok(())
 }
 
-/// Prints a prompt and reads a line of user input into `input`.
+/// Prompts the user for input and returns the trimmed string.
 ///
 /// # Errors
-/// Returns [`AppError`] if any I/O operation fails.
-pub fn prompt_user_input(prompt: &str, input: &mut String) -> Result<(), AppError> {
-    print!("{prompt}: ");
+/// Returns [`AppError`] if I/O operations fail.
+pub fn prompt_input(prompt: &str) -> Result<String, AppError> {
+    print!("{prompt}");
     io::stdout().flush()?;
-    io::stdin().read_line(input)?;
-    Ok(())
+    let mut input = String::new();
+    io::stdin().read_line(&mut input)?;
+    Ok(input.trim().to_string())
 }
 
 /// Parses a date string in one of several supported formats.
@@ -122,6 +131,7 @@ pub fn parse_date(input: &str) -> Option<NaiveDate> {
 }
 
 /// Pauses execution for 1500 milliseconds.
+#[inline]
 pub fn thread_sleep_timer() {
     thread::sleep(Duration::from_millis(1500))
 }
