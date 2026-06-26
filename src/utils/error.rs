@@ -1,6 +1,6 @@
+use std::{fmt, io};
+
 use crate::utils::*;
-use std::fmt;
-use std::io;
 
 /// Application-level error type that formats messages using [`color_error_print`].
 #[derive(Debug)]
