@@ -1,10 +1,14 @@
-use crate::utils::prompt_for_username;
-use crate::utils::*;
+use std::{
+    fs,
+    path::Path
+};
+
 use serde::{Deserialize, Serialize};
-use std::fs;
-use std::path::Path;
+
+use crate::utils::{clear_console, prompt_for_username};
 
 const CONFIG_DATA_FILE: &str = "./web/public/data/config/config.json";
+const DEFAULT_NAME: &str = "User";
 
 /// Stored user configuration.
 #[derive(Serialize, Deserialize)]
@@ -17,10 +21,14 @@ struct Config {
 /// Called once on startup. If the config file is missing or empty,
 /// the user is asked to enter their name before continuing.
 pub fn check_name() {
-    if fs::metadata(CONFIG_DATA_FILE)
-        .map(|m| m.len() == 0)
-        .unwrap_or(true)
-    {
+    let has_valid_config = Path::new(CONFIG_DATA_FILE)
+        .exists()
+        .then(|| fs::metadata(CONFIG_DATA_FILE).ok())
+        .flatten()
+        .map(|m| m.len() > 0)
+        .unwrap_or(false);
+
+    if !has_valid_config {
         prompt_for_username();
         clear_console();
     }
@@ -45,16 +53,21 @@ pub fn save_name(name: &str) -> Result<(), String> {
 
 /// Loads the username from the config file.
 ///
-/// Returns `"Name"` as a fallback if the file does not exist.
+/// Returns `"User"` as a fallback if the file does not exist.
 ///
 /// # Errors
 /// Returns a [`String`] error message if reading or deserializing the file fails.
 pub fn load_name() -> Result<String, String> {
     if !Path::new(CONFIG_DATA_FILE).exists() {
-        return Ok("Name".to_string());
+        return Ok(DEFAULT_NAME.to_string());
     }
 
     let json = fs::read_to_string(CONFIG_DATA_FILE).map_err(|e| e.to_string())?;
+
+    if json.trim().is_empty() {
+        return Ok(DEFAULT_NAME.to_string());
+    }
+
     let config: Config = serde_json::from_str(&json).map_err(|e| e.to_string())?;
     Ok(config.name)
 }
