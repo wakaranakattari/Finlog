@@ -7,5 +7,6 @@ out
 yarn-error.log
 report.html
 data/
-public/css/styles.css
-public/css/styles.css.map
+public/css/main.css
+public/css/expenses.css
+public/css/statistic.css
