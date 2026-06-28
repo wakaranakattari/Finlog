@@ -1,0 +1,49 @@
+@use '../variables' as *;
+@use '../mixins' as *;
+
+.statistics-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1rem;
+}
+
+.page-title {
+  @include section-title(1.5rem);
+  padding-left: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.charts-section {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.chart-card {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1.5rem;
+  @include pixelated-card;
+  @include card-hover;
+
+  h2 {
+    @include pixel-font(20px, 600);
+    margin: 0 0 1rem 0;
+    color: var(--text-primary);
+    border-left: 4px solid var(--accent-blush);
+    padding-left: 0.75rem;
+  }
+}
+
+.chart-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}

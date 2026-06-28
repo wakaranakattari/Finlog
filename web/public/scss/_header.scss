@@ -1,0 +1,116 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.header {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  @include pixelated-card(var(--bg-secondary));
+  color: var(--text-primary);
+  padding: 0.5rem 0;
+}
+
+.title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  color: var(--text-primary);
+  font-size: var(--main-font-size);
+  margin-left: 1.5rem;
+}
+
+.buttons-menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--gap-size);
+
+  button {
+    @include pixel-font(var(--button-font-size));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    padding: 0.3rem 1rem;
+    border: 2px solid var(--border);
+    border-radius: $border-radius;
+    background-color: var(--buttons-color);
+    color: var(--text-primary);
+    box-shadow: 3px 3px 0 var(--border);
+    transition: $transition-fast;
+    image-rendering: pixelated;
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--accent-peach);
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--border);
+      background-color: var(--bg-hover);
+    }
+  }
+}
+
+.session-id {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: 1.5rem;
+  color: var(--text-primary);
+  font-size: 20px;
+}
+
+.greeting-cyan   { color: var(--greeting-cyan);   }
+.greeting-green  { color: var(--greeting-green);  }
+.greeting-yellow { color: var(--greeting-yellow); }
+.greeting-blue   { color: var(--greeting-blue);   }
+
+.greeting-section {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  padding: 1rem 2rem;
+  @include pixelated-card(var(--bg-secondary));
+  font-size: 22px;
+  @include card-hover;
+
+  span:not(.greeting-cyan):not(.greeting-green):not(.greeting-yellow):not(.greeting-blue) {
+    color: var(--text-primary);
+  }
+
+  span:nth-child(2) { color: var(--accent-blush); }
+
+  span:nth-child(3),
+  span:nth-child(4) {
+    color: var(--text-secondary);
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+
+    &::before {
+      content: "◆";
+      margin-right: 0.5rem;
+      color: var(--border);
+    }
+  }
+}
+
+.exchange-rate-section {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  padding: 1rem 2rem;
+  @include pixelated-card(var(--bg-secondary));
+  font-size: 22px;
+  @include card-hover;
+
+  span             { color: var(--text-primary);   }
+  span:nth-child(1){ color: var(--text-secondary); }
+  span:nth-child(2){ color: var(--accent-sage);    }
+}
+
+.time {
+  min-width: 80px;
+  display: inline-block;
+  text-align: center;
+}

@@ -1,0 +1,7 @@
+@use '../variables' as *;
+
+.stats-summary--home {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 600px;
+  margin: 0 auto;
+}

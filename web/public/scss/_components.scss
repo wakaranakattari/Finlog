@@ -1,0 +1,133 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  @include pixelated-card;
+  @include card-hover;
+
+  span:first-child {
+    @include pixel-font(16px);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  span:last-child {
+    @include pixel-font(32px, 700);
+    color: var(--accent-rose);
+  }
+}
+
+.expense-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  @include pixelated-card;
+  @include card-hover;
+}
+
+.expense-name {
+  @include pixel-font(22px, 600);
+  color: var(--text-primary);
+}
+
+.expense-category {
+  @include pixel-font(16px);
+  display: inline-block;
+  width: fit-content;
+  padding: 0.1rem 0.75rem;
+  background-color: rgba(255, 205, 178, 0.1);
+  border: 1px solid var(--accent-blush);
+  border-radius: $border-radius;
+  color: var(--accent-blush);
+}
+
+.expense-amount {
+  @include pixel-font(26px, 700);
+  color: var(--accent-rose);
+}
+
+.expense-meta {
+  @include pixel-font(16px);
+  display: flex;
+  gap: 1rem;
+  color: var(--text-secondary);
+  border-top: 2px solid var(--border);
+  padding-top: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 2rem;
+  background-color: var(--bg-secondary);
+  border: 2px dashed var(--border);
+  border-radius: var(--border-radius);
+  color: var(--text-secondary);
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state-title {
+  @include pixel-font(22px);
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.empty-state-text {
+  @include pixel-font(18px);
+  color: var(--text-secondary);
+}
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-primary);
+  z-index: 9999;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+
+  &.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+.preloader-spinner {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 24px;
+  border: 4px solid var(--bg-secondary);
+  border-top-color: var(--accent-blush);
+  border-right-color: var(--accent-peach);
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(255, 205, 178, 0.1);
+  animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+}
+
+.preloader-text {
+  @include pixel-font(20px, 700);
+  color: var(--text-primary);
+  letter-spacing: 4px;
+  animation: pulse 1.5s ease-in-out infinite;
+
+  &::after {
+    content: '';
+    animation: dots 1.5s steps(4) infinite;
+  }
+}

@@ -1,0 +1,56 @@
+@use 'variables' as *;
+
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-primary:      #1a1423;
+  --bg-secondary:    #2a1f33;
+  --bg-card:         #33273d;
+  --bg-hover:        #3d3047;
+  --text-primary:    #f5ede4;
+  --text-secondary:  #c4b5a8;
+  --text-light:      #a89588;
+  --accent-blush:    #ffcdb2;
+  --accent-peach:    #ffb4a2;
+  --accent-rose:     #e5989b;
+  --accent-mauve:    #b5828c;
+  --accent-warm:     #e8b88a;
+  --accent-sage:     #8fbc8f;
+  --border:          #3d3047;
+  --shadow:          rgba(0, 0, 0, 0.4);
+  --buttons-color:   #33273d;
+  --greeting-cyan:   #b5a8d4;
+  --greeting-green:  #8fbc8f;
+  --greeting-yellow: #e8c97a;
+  --greeting-blue:   #b5a8d4;
+  --border-radius:   #{$border-radius};
+  --padding-rem:     0.5rem;
+  --main-font-size:  22px;
+  --button-font-size:18px;
+  --gap-size:        1rem;
+}
+
+body {
+  background-color: var(--bg-primary);
+  font-family: $font-pixel;
+  font-size: 18px;
+  image-rendering: pixelated;
+}
+
+@keyframes spin {
+  0%   { transform: rotate(0deg)   scale(1);    }
+  50%  { transform: rotate(180deg) scale(1.05); }
+  100% { transform: rotate(360deg) scale(1);    }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1);    }
+  50%       { opacity: 1;   transform: scale(1.02); }
+}
+
+@keyframes dots {
+  0%   { content: '';    }
+  25%  { content: '.';   }
+  50%  { content: '..';  }
+  75%  { content: '...'; }
+}

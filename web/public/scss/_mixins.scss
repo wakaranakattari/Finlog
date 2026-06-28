@@ -1,0 +1,35 @@
+@use 'variables' as *;
+
+@mixin pixelated-card($bg: var(--bg-secondary)) {
+  background-color: $bg;
+  border: 2px solid var(--border);
+  border-radius: var(--border-radius);
+  box-shadow: 4px 4px 0 var(--border);
+  transition: $transition-fast;
+  image-rendering: pixelated;
+}
+
+@mixin card-hover {
+  &:hover {
+    transform: translate(-1px, -1px);
+    border-color: var(--accent-peach);
+    box-shadow: 5px 5px 0 var(--border);
+  }
+}
+
+@mixin section-title($font-size: 22px) {
+  display: block;
+  font-size: $font-size;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-left: 0.5rem;
+  color: var(--text-primary);
+  border-left: 4px solid var(--accent-blush);
+  font-family: $font-pixel;
+}
+
+@mixin pixel-font($size: 18px, $weight: 400) {
+  font-family: $font-pixel;
+  font-size: $size;
+  font-weight: $weight;
+}
