@@ -1,16 +1,12 @@
 use std::{
     io::{self, Write},
-    process,
-    thread,
+    process, thread,
     time::Duration,
 };
 
 use chrono::{Datelike, NaiveDate, Timelike};
 
-use crate::{
-    storage::config::*,
-    utils::*,
-};
+use crate::{storage::config::*, utils::*};
 
 /// Clears the terminal screen including scrollback history.
 #[inline]
@@ -35,10 +31,10 @@ pub fn time_greeting(name: &str) {
     let hour = now.hour();
 
     let greeting = match hour {
-        5..=11  => "Good morning",
+        5..=11 => "Good morning",
         12..=17 => "Good afternoon",
         18..=21 => "Good evening",
-        _       => "Good night",
+        _ => "Good night",
     };
 
     println!(
@@ -52,7 +48,10 @@ pub fn time_greeting(name: &str) {
 pub fn prompt_for_username() {
     let mut username = String::new();
 
-    print!("{}", color_print("First launch! Enter your username: ", Color::Green));
+    print!(
+        "{}",
+        color_print("First launch! Enter your username: ", Color::Green)
+    );
     io::stdout().flush().unwrap();
     io::stdin().read_line(&mut username).unwrap();
     save_name(username.trim()).unwrap();
@@ -61,17 +60,32 @@ pub fn prompt_for_username() {
 /// Prints the main Finlog application header.
 #[inline]
 pub fn header(title: &str) {
-    println!("{}", color_print("┌────────────────────────────────────────┐", Color::Green));
-    println!("{}", color_print(&format!("│{:^40}│", title), Color::Yellow));
-    println!("{}", color_print("└────────────────────────────────────────┘", Color::Red));
+    println!(
+        "{}",
+        color_print("┌────────────────────────────────────────┐", Color::Green)
+    );
+    println!(
+        "{}",
+        color_print(&format!("│{:^40}│", title), Color::Yellow)
+    );
+    println!(
+        "{}",
+        color_print("└────────────────────────────────────────┘", Color::Red)
+    );
 }
 
 /// Prints a centered section header with the given title in a gray box.
 #[inline]
 pub fn print_header(title: &str) {
-    println!("{}", color_print("┌────────────────────────────────────────┐", Color::Gray));
+    println!(
+        "{}",
+        color_print("┌────────────────────────────────────────┐", Color::Gray)
+    );
     println!("{}", color_print(&format!("│{:^40}│", title), Color::Gray));
-    println!("{}", color_print("└────────────────────────────────────────┘", Color::Gray));
+    println!(
+        "{}",
+        color_print("└────────────────────────────────────────┘", Color::Gray)
+    );
 }
 
 /// Waits for the user to press Enter, then clears the console.
@@ -109,13 +123,7 @@ pub fn parse_date(input: &str) -> Option<NaiveDate> {
     let input = input.trim();
 
     let formats = [
-        "%d.%m.%Y",
-        "%d.%m.%y",
-        "%d %m %Y",
-        "%d %m %y",
-        "%d-%m-%Y",
-        "%d-%m-%y",
-        "%Y-%m-%d",
+        "%d.%m.%Y", "%d.%m.%y", "%d %m %Y", "%d %m %y", "%d-%m-%Y", "%d-%m-%y", "%Y-%m-%d",
     ];
 
     for format in formats {

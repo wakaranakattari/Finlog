@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     storage,
-    utils::{color::*, console::*, AppError},
+    utils::{AppError, color::*, console::*},
 };
 
 /// Represents a single spending record.
@@ -47,11 +47,20 @@ impl SpendingManager {
             .format("%d.%m.%Y")
             .to_string();
 
-        let item = SpendingItem { name, category, amount, date };
+        let item = SpendingItem {
+            name,
+            category,
+            amount,
+            date,
+        };
 
-        println!("{}", color_info_print(&format!("Spending item added: {} - {} - {} - {}",
+        println!(
+            "{}",
+            color_info_print(&format!(
+                "Spending item added: {} - {} - {} - {}",
                 item.name, item.category, item.amount, item.date
-        )));
+            ))
+        );
 
         self.spending.push(item);
         storage::save_items(&self.spending)?;
@@ -77,23 +86,57 @@ impl SpendingManager {
         }
 
         let idx_width = self.spending.len().to_string().len() + 1;
-        let name_width = self.spending.iter().map(|i| i.name.chars().count()).max().unwrap_or(0);
-        let cat_width = self.spending.iter().map(|i| i.category.chars().count()).max().unwrap_or(0);
-        let amount_width = self.spending.iter()
+        let name_width = self
+            .spending
+            .iter()
+            .map(|i| i.name.chars().count())
+            .max()
+            .unwrap_or(0);
+        let cat_width = self
+            .spending
+            .iter()
+            .map(|i| i.category.chars().count())
+            .max()
+            .unwrap_or(0);
+        let amount_width = self
+            .spending
+            .iter()
             .map(|i| format!("{:.2}", i.amount).len())
-            .max().unwrap_or(0);
-        let date_width = self.spending.iter().map(|i| i.date.chars().count()).max().unwrap_or(0);
+            .max()
+            .unwrap_or(0);
+        let date_width = self
+            .spending
+            .iter()
+            .map(|i| i.date.chars().count())
+            .max()
+            .unwrap_or(0);
 
         for (index, item) in self.spending.iter().enumerate() {
             let idx = format!("{}.", index + 1);
-            let name = format!("{}{}", item.name, " ".repeat(name_width - item.name.chars().count()));
-            let cat = format!("{}{}", item.category, " ".repeat(cat_width - item.category.chars().count()));
+            let name = format!(
+                "{}{}",
+                item.name,
+                " ".repeat(name_width - item.name.chars().count())
+            );
+            let cat = format!(
+                "{}{}",
+                item.category,
+                " ".repeat(cat_width - item.category.chars().count())
+            );
             let amount = format!("{:.2}", item.amount);
-            let date = format!("{}{}", item.date, " ".repeat(date_width - item.date.chars().count()));
+            let date = format!(
+                "{}{}",
+                item.date,
+                " ".repeat(date_width - item.date.chars().count())
+            );
 
             println!(
                 "{:<idx_width$} {} | {} | {:>amount_width$} | {}",
-                idx, name, cat, amount, date,
+                idx,
+                name,
+                cat,
+                amount,
+                date,
                 idx_width = idx_width,
             );
         }
@@ -118,24 +161,29 @@ impl SpendingManager {
         }
 
         for (index, item) in self.spending.iter().enumerate() {
-            println!("{}. {} | {} | {:.2} | {}", index + 1,
-                item.name, item.category, item.amount, item.date);
+            println!(
+                "{}. {} | {} | {:.2} | {}",
+                index + 1,
+                item.name,
+                item.category,
+                item.amount,
+                item.date
+            );
         }
 
         let input = prompt_input("Enter number of item to delete: ")?;
         let index: usize = input.parse().unwrap_or(0) - 1;
 
         if index < self.spending.len() {
-                storage::delete_items(&mut self.spending, index)?;
-                println!("{}", color_info_print("Item deleted successfully."));
-                thread_sleep_timer();
-                self.view_spending_items()?;
-            } else {
+            storage::delete_items(&mut self.spending, index)?;
+            println!("{}", color_info_print("Item deleted successfully."));
+            thread_sleep_timer();
+            self.view_spending_items()?;
+        } else {
             println!("{}", color_error_print("Invalid item number."));
         }
 
         Ok(())
-    
     }
 
     /// Displays total spending amount and record count across all items.
@@ -171,31 +219,32 @@ impl SpendingManager {
     /// The search is case-insensitive and supports Unicode via [`str::to_lowercase`].
     pub fn find_item_by_name(&self, name: &str) -> Vec<&SpendingItem> {
         let query = name.to_lowercase();
-        self.spending.iter()
+        self.spending
+            .iter()
             .filter(|item| item.name.to_lowercase().contains(&query))
             .collect()
     }
 
     pub fn handle_find_item_by_name(&self) -> Result<(), AppError> {
-            clear_console();
-            print_header("Find Item by Name");
+        clear_console();
+        print_header("Find Item by Name");
 
-            let input = prompt_input("Enter item name: ")?;
+        let input = prompt_input("Enter item name: ")?;
 
-            let results = self.find_item_by_name(&input);
-            if results.is_empty() {
-                println!("{}", color_error_print("Item not found."));
-            } else {
-                for item in results {
-                    println!(
-                        "{} | {} | {:.2} | {}",
-                        item.name, item.category, item.amount, item.date
-                    );
-                }
+        let results = self.find_item_by_name(&input);
+        if results.is_empty() {
+            println!("{}", color_error_print("Item not found."));
+        } else {
+            for item in results {
+                println!(
+                    "{} | {} | {:.2} | {}",
+                    item.name, item.category, item.amount, item.date
+                );
             }
+        }
 
-            back_to_main_menu()?;
-            Ok(())
+        back_to_main_menu()?;
+        Ok(())
     }
 
     /// Returns a slice of all spending items.

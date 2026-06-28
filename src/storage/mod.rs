@@ -1,3 +1,3 @@
-pub mod json;
 pub mod config;
-pub use json::{load_items, save_items, delete_items};
+pub mod json;
+pub use json::{delete_items, load_items, save_items};

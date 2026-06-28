@@ -74,7 +74,10 @@ async fn menu(spending: &mut SpendingManager) -> Result<(), AppError> {
         "7" => exit(),
         _ => {
             clear_console();
-            println!("{}", color_error_print("Invalid input or invalid menu item"));
+            println!(
+                "{}",
+                color_error_print("Invalid input or invalid menu item")
+            );
             thread_sleep_timer();
         }
     }
